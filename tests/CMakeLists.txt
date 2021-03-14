@@ -5,6 +5,7 @@ add_executable(uuidxx_test)
 target_sources(uuidxx_test
   PRIVATE
     main.cpp
+    uuid_test.cpp
 )
 
 apply_uuidxx_compile_conf(uuidxx_test)

@@ -5,6 +5,7 @@ target_sources(uuidxx
   PRIVATE
     uuid.h
     uuid.cpp
+    uuidxx.h
 
   $<$<BOOL:${WIN32}>:
   >

@@ -77,6 +77,7 @@ public:
     [[nodiscard]] std::string to_string() const;
 
 private:
+    // The RFC 4122 has only one variant.
     void set_variant() noexcept;
 
     void set_version(uint8_t ver) noexcept;

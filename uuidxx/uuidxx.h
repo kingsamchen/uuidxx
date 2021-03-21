@@ -5,12 +5,13 @@
 #ifndef UUIDXX_UUIDXX_H_
 #define UUIDXX_UUIDXX_H_
 
+#include "uuidxx/rand_generator.h"
 #include "uuidxx/uuid.h"
 
 namespace uuid {
 
-template<typename RandGen>
-uuid make_v4(RandGen&& gen)
+template<typename RandGen=default_rand_gen_t>
+uuid make_v4(RandGen&& gen=default_rand_gen)
 {
     return uuid(std::forward<RandGen>(gen), details::gen_v4);
 }

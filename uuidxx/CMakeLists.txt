@@ -3,9 +3,10 @@ add_library(uuidxx)
 
 target_sources(uuidxx
   PRIVATE
+    uuidxx.h
+    rand_generator.h
     uuid.h
     uuid.cpp
-    uuidxx.h
 
   $<$<BOOL:${WIN32}>:
   >

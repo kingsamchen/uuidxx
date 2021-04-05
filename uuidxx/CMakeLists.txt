@@ -4,13 +4,17 @@ add_library(uuidxx)
 target_sources(uuidxx
   PRIVATE
     uuidxx.h
+
     clock_sequence.cpp
     clock_sequence.h
+    node_fetcher.cpp
+    node_fetcher.h
     rand_generator.h
     uuid.cpp
     uuid.h
 
   $<$<BOOL:${WIN32}>:
+    mac_address_win.cpp
   >
 
   $<$<NOT:$<BOOL:${WIN32}>>:

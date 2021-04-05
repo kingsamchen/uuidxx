@@ -10,6 +10,12 @@
 
 namespace uuid {
 
+template<typename NodeFetcher=mac_addr_reader_t>
+uuid make_v1(NodeFetcher&& fetcher=read_mac_addr_as_node_id)
+{
+    return uuid(std::forward<NodeFetcher>(fetcher), details::gen_v1);
+}
+
 template<typename RandGen=default_rand_gen_t>
 uuid make_v4(RandGen&& gen=default_rand_gen)
 {

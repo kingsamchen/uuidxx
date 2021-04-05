@@ -9,6 +9,9 @@
 #include <cstdint>
 #include <string>
 
+#include "uuidxx/clock_sequence.h"
+#include "uuidxx/node_fetcher.h"
+
 namespace uuid {
 namespace details {
 
@@ -42,6 +45,8 @@ inline constexpr gen_v5_t gen_v5 {};
 
 namespace version {
 
+inline constexpr uint8_t v1 = 1u;
+inline constexpr uint8_t v2 = 2u;
 inline constexpr uint8_t v3 = 3u;
 inline constexpr uint8_t v4 = 4u;
 inline constexpr uint8_t v5 = 5u;
@@ -50,6 +55,33 @@ inline constexpr uint8_t v5 = 5u;
 
 class uuid {
 public:
+    template<typename NodeFetcher>
+    uuid(NodeFetcher&& fetch, details::gen_v1_t)
+        : data_{}
+    {
+        // TODO: Restrict signature of NodeFetcher.
+        auto [ts, seq] = clock_sequence::instance().read();
+
+        node_id id;
+        fetch(id);
+
+        data_[0] |= ts << 32;
+        data_[0] |= (ts & UINT64_C(0x0000'ffff'0000'0000)) >> 16;
+        data_[0] |= ts >> 48;
+
+        data_[1] |= static_cast<uint64_t>(seq & 0xff00) << 48;
+        data_[1] |= static_cast<uint64_t>(seq & 0xff) << 48;
+
+        // Reversely copy into 0 ~ 47 bits of data_[1].
+        uint8_t* ptr = reinterpret_cast<uint8_t*>(&data_[1]);
+        for (auto it = id.rbegin(); it != id.rend();) {
+            *ptr++ = *it++;
+        }
+
+        set_variant();
+        set_version(version::v1);
+    }
+
     template<typename RandGen>
     uuid(RandGen&& gen, details::gen_v4_t)
     {

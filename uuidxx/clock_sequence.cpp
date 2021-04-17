@@ -23,7 +23,7 @@ clock_sequence& clock_sequence::instance()
 // static
 uint64_t clock_sequence::get_timestamp_since_epoch()
 {
-    auto ts = k_epoch_diff + std::chrono::duration<clock_sequence::duration>(
+    auto ts = k_epoch_diff + std::chrono::duration_cast<clock_sequence::duration>(
         std::chrono::system_clock::now().time_since_epoch());
     return ts.count();
 }

@@ -1,4 +1,6 @@
 
+find_package(Threads REQUIRED)
+
 add_library(uuidxx)
 
 target_sources(uuidxx
@@ -18,6 +20,7 @@ target_sources(uuidxx
   >
 
   $<$<NOT:$<BOOL:${WIN32}>>:
+    mac_address_posix.cpp
   >
 )
 
@@ -26,6 +29,8 @@ target_include_directories(uuidxx
 )
 
 target_link_libraries(uuidxx
+  INTERFACE
+    Threads::Threads
 )
 
 apply_uuidxx_compile_conf(uuidxx)

@@ -5,13 +5,14 @@
 #include "uuidxx/node_fetcher.h"
 
 #include <cstring>
+#include <functional>
 #include <mutex>
 
 #include "uuidxx/rand_generator.h"
 
 namespace uuid {
 
-bool load_mac_addr_from_sys(node_id& addr);
+bool load_mac_addr_from_sys(node_id& mac_addr);
 
 void load_mac_address(node_id& addr)
 {

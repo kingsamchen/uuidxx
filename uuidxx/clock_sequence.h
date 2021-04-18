@@ -8,7 +8,7 @@
 #include <chrono>
 #include <mutex>
 
-namespace uuid {
+namespace uuidxx {
 
 class clock_sequence {
 private:
@@ -46,6 +46,6 @@ private:
     static constexpr duration k_epoch_diff{122192928000000000};
 };
 
-}   // namespace uuid
+}   // namespace uuidxx
 
 #endif  // UUIDXX_CLOCK_SEQUENCE_H_

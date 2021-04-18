@@ -10,7 +10,7 @@
 
 #include "uuidxx/rand_generator.h"
 
-namespace uuid {
+namespace uuidxx {
 
 bool load_mac_addr_from_sys(node_id& mac_addr);
 
@@ -38,4 +38,4 @@ void read_mac_addr_as_node_id(node_id& id)
     std::memcpy(id.data(), mac_addr.data(), mac_addr.size());
 }
 
-}   // namespace uuid
+}   // namespace uuidxx

@@ -9,7 +9,7 @@
 #include <mutex>
 #include <random>
 
-namespace uuid {
+namespace uuidxx {
 
 namespace details {
 
@@ -62,6 +62,6 @@ inline uint64_t default_rand_gen()
 
 using default_rand_gen_t = decltype(default_rand_gen);
 
-}   // namespace uuid
+}   // namespace uuidxx
 
 #endif  // UUIDXX_RAND_GENERATOR_H_

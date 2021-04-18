@@ -6,7 +6,7 @@
 
 #include <random>
 
-namespace uuid {
+namespace uuidxx {
 
 clock_sequence::clock_sequence()
     : last_time_(0),
@@ -48,4 +48,4 @@ std::tuple<uint64_t, uint16_t> clock_sequence::read()
     return std::make_tuple(now, seq);
 }
 
-}   // namespace uuid
+}   // namespace uuidxx

@@ -11,7 +11,7 @@
 
 #pragma comment(lib, "IPHLPAPI.lib")
 
-namespace uuid {
+namespace uuidxx {
 
 bool load_mac_addr_from_sys(node_id& mac_addr)
 {
@@ -49,4 +49,4 @@ bool load_mac_addr_from_sys(node_id& mac_addr)
     return false;
 }
 
-}   // namespace uuid
+}   // namespace uuidxx

@@ -12,7 +12,7 @@
 #include "uuidxx/clock_sequence.h"
 #include "uuidxx/node_fetcher.h"
 
-namespace uuid {
+namespace uuidxx {
 namespace details {
 
 struct gen_v1_t {
@@ -127,6 +127,6 @@ private:
     data data_;
 };
 
-}   // namespace uuid
+}   // namespace uuidxx
 
 #endif  // UUIDXX_UUID_H_

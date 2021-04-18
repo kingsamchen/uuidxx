@@ -13,7 +13,7 @@ constexpr size_t k_canonical_len = 36;
 
 }   // namespace
 
-namespace uuid {
+namespace uuidxx {
 
 void uuid::set_variant() noexcept
 {
@@ -44,4 +44,4 @@ std::string uuid::to_string() const
     return s;
 }
 
-}   // namespace uuid
+}   // namespace uuidxx

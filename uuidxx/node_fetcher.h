@@ -9,7 +9,7 @@
 #include <cstdint>
 #include <type_traits>
 
-namespace uuid {
+namespace uuidxx {
 
 // A 48-bit device-related identifier.
 using node_id = std::array<uint8_t, 6>;
@@ -27,6 +27,6 @@ void read_mac_addr_as_node_id(node_id& id);
 
 using mac_addr_reader_t = decltype(read_mac_addr_as_node_id);
 
-}   // namespace uuid
+}   // namespace uuidxx
 
 #endif  // UUIDXX_NODE_FETCHER_H_

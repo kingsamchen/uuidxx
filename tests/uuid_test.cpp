@@ -12,7 +12,7 @@ namespace {
 
 }   // namespace
 
-namespace uuid {
+namespace uuidxx {
 
 TEST_CASE("V4 Format compliant", "[v4]")
 {
@@ -95,4 +95,4 @@ TEST_CASE("V1 Uniqueness and validation", "[v1]")
     }
 }
 
-}   // namespace uuid
+}   // namespace uuidxx

@@ -59,7 +59,8 @@ public:
     uuid(NodeFetcher&& fetch, details::gen_v1_t)
         : data_{}
     {
-        // TODO: Restrict signature of NodeFetcher.
+        static_assert(valid_fetcher_t<NodeFetcher>::value);
+
         auto [ts, seq] = clock_sequence::instance().read();
 
         node_id id;

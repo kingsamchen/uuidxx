@@ -22,7 +22,7 @@ DO NOT use it in production.
 
 int main()
 {
-    auto u = uuid::make_v4();
+    auto u = uuidxx::make_v4();
     std::cout << "Generated v4 UUID " << u.to_string();
 
     return 0;

@@ -10,6 +10,7 @@
 #include <string>
 
 #include "uuidxx/clock_sequence.h"
+#include "uuidxx/dce_host_identifier.h"
 #include "uuidxx/node_fetcher.h"
 
 namespace uuidxx {
@@ -81,6 +82,37 @@ public:
 
         set_variant();
         set_version(version::v1);
+    }
+
+    uuid(host_id host, details::gen_v2_t)
+        : data_{}
+    {
+        // Need high 32-bit of ts and high 8-bit of seq.
+        auto [ts, seq] = clock_sequence::instance().read();
+
+        // `local_domain` replaces low 8-bit of seq.
+        // `local_id` replaces low 32-bit of ts.
+        auto local_domain = host.domain();
+        auto local_id = host.id();
+
+        node_id node;
+        read_mac_addr_as_node_id(node);
+
+        data_[0] |= static_cast<uint64_t>(local_id) << 32;
+        data_[0] |= (ts & UINT64_C(0x0000'ffff'0000'0000)) >> 16;
+        data_[0] |= ts >> 48;
+
+        data_[1] |= static_cast<uint64_t>(seq & 0xff00) << 48;
+        data_[1] |= static_cast<uint64_t>(local_domain) << 48;
+
+        // Reversely copy into 0 ~ 47 bits of data_[1].
+        uint8_t* ptr = reinterpret_cast<uint8_t*>(&data_[1]);
+        for (auto it = node.rbegin(); it != node.rend();) {
+            *ptr++ = *it++;
+        }
+
+        set_variant();
+        set_version(version::v2);
     }
 
     template<typename RandGen>

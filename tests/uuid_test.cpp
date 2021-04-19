@@ -95,4 +95,55 @@ TEST_CASE("V1 Uniqueness and validation", "[v1]")
     }
 }
 
+TEST_CASE("V2 generation and validation", "[v2]")
+{
+    std::vector<std::string> ids;
+    for (int i = 0; i < 10; ++i) {
+        ids.push_back(make_v2(make_person_host()).to_string());
+    }
+
+    SECTION("last 6-digits(node-id) should be the same")
+    {
+        std::vector<std::string> nodes;
+        std::transform(ids.begin(), ids.end(), std::back_inserter(nodes),
+                       [](const std::string& id) {
+                           auto pos = id.rfind('-');
+                           return id.substr(pos + 1, id.size() - pos);
+                       });
+        for (auto iter = std::next(nodes.begin()); iter != nodes.end(); ++iter) {
+            REQUIRE(*iter == *std::prev(iter));
+        }
+    }
+
+    SECTION("first 8-digits(local identifier) should be the same")
+    {
+        std::vector<std::string> local_ids;
+        for (const auto& id : ids) {
+            local_ids.push_back(id.substr(0, 8));
+        }
+        for (auto it = local_ids.begin() + 1; it != local_ids.end(); ++it) {
+            REQUIRE(*it == *(it - 1));
+        }
+    }
+
+    SECTION("non-decreasing part")
+    {
+        std::vector<std::pair<unsigned long, unsigned long>> tss;
+        for (const auto& id : ids) {
+            auto ts_mid = id.substr(9, 4);
+            auto ts_high = id.substr(14, 4);
+            auto ts = std::stoul(ts_high + ts_mid, nullptr, 16);
+            auto seq = std::stoul(id.substr(19, 4), nullptr, 16);
+            tss.emplace_back(ts, seq);
+        }
+
+        for (auto it = tss.begin() + 1; it != tss.end(); ++it) {
+            auto prev_it = it - 1;
+            REQUIRE (
+                ((prev_it->first < it->first) ||
+                (prev_it->first == it->first && prev_it->second <= it->second)));
+        }
+    }
+}
+
 }   // namespace uuidxx

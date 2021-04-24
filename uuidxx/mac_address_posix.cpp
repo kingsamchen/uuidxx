@@ -10,7 +10,7 @@
 
 #include "uuidxx/node_fetcher.h"
 
-namespace uuid {
+namespace uuidxx {
 
 sockaddr_ll* find_adapter(ifaddrs* start, size_t mac_addr_len)
 {
@@ -47,4 +47,4 @@ bool load_mac_addr_from_sys(node_id& mac_addr)
     return ifad != nullptr;
 }
 
-}   // namespace uuid
+}   // namespace uuidxx

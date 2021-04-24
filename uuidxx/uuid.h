@@ -75,7 +75,7 @@ public:
         data_[1] |= static_cast<uint64_t>(seq & 0xff) << 48;
 
         // Reversely copy into 0 ~ 47 bits of data_[1].
-        uint8_t* ptr = reinterpret_cast<uint8_t*>(&data_[1]);
+        auto ptr = reinterpret_cast<uint8_t*>(&data_[1]);
         for (auto it = id.rbegin(); it != id.rend();) {
             *ptr++ = *it++;
         }
@@ -106,7 +106,7 @@ public:
         data_[1] |= static_cast<uint64_t>(local_domain) << 48;
 
         // Reversely copy into 0 ~ 47 bits of data_[1].
-        uint8_t* ptr = reinterpret_cast<uint8_t*>(&data_[1]);
+        auto ptr = reinterpret_cast<uint8_t*>(&data_[1]);
         for (auto it = node.rbegin(); it != node.rend();) {
             *ptr++ = *it++;
         }

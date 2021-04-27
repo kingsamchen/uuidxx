@@ -8,6 +8,7 @@
 #include <array>
 #include <cstdint>
 #include <string>
+#include <string_view>
 
 #include "uuidxx/clock_sequence.h"
 #include "uuidxx/dce_host_identifier.h"
@@ -55,6 +56,15 @@ inline constexpr uint8_t v5 = 5u;
 }   // namespace version
 
 class uuid {
+public:
+    // octets:  8 - 4 - 4 - 4 - 12
+    //         -----------+--------
+    // storage: data[0]     data[1]
+    using data = std::array<uint64_t, 2>;
+
+    static_assert(sizeof(data) == 16);
+    static_assert(alignof(data) == 8);
+
 public:
     template<typename NodeFetcher>
     uuid(NodeFetcher&& fetch, details::gen_v1_t)
@@ -115,6 +125,8 @@ public:
         set_version(version::v2);
     }
 
+    uuid(const uuid& ns, std::string_view name, details::gen_v3_t);
+
     template<typename RandGen>
     uuid(RandGen&& gen, details::gen_v4_t)
     {
@@ -141,6 +153,12 @@ public:
 
     [[nodiscard]] std::string to_string() const;
 
+    // The value is implementation defined.
+    const data& raw_data() const noexcept
+    {
+        return data_;
+    }
+
 private:
     // The RFC 4122 has only one variant.
     void set_variant() noexcept;
@@ -148,14 +166,6 @@ private:
     void set_version(uint8_t ver) noexcept;
 
 private:
-    // octets:  8 - 4 - 4 - 4 - 12
-    //         -----------+--------
-    // storage: data[0]     data[1]
-    using data = std::array<uint64_t, 2>;
-
-    static_assert(sizeof(data) == 16);
-    static_assert(alignof(data) == 8);
-
     data data_;
 };
 

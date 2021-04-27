@@ -33,6 +33,8 @@ target_include_directories(uuidxx
 target_link_libraries(uuidxx
   INTERFACE
     Threads::Threads
+  PRIVATE
+    hash
 )
 
 apply_uuidxx_compile_conf(uuidxx)

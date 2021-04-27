@@ -27,6 +27,11 @@ inline uuid make_v2(host_id host)
     return uuid(host, details::gen_v2);
 }
 
+inline uuid make_v3(const uuid& ns, std::string_view name)
+{
+    return uuid(ns, name, details::gen_v3);
+}
+
 template<typename RandGen=default_rand_gen_t>
 uuid make_v4(RandGen&& gen=default_rand_gen)
 {

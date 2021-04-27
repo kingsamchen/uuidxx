@@ -7,13 +7,48 @@
 #include <cinttypes>
 #include <cstdio>
 
+extern "C" {
+#include "hash/md5.h"
+}
+
+#include "uuidxx/endian_utils.h"
+
+namespace uuidxx {
 namespace {
 
 constexpr size_t k_canonical_len = 36;
 
+void md5_hash(const uuid::data& ns_data, std::string_view name, uuid::data& hashed_data)
+{
+    MD5_CTX ctx;
+    MD5_Init(&ctx);
+    MD5_Update(&ctx, ns_data.data(), sizeof(ns_data));
+    MD5_Update(&ctx, name.data(), static_cast<unsigned long>(name.size()));
+    MD5_Final(reinterpret_cast<unsigned char*>(hashed_data.data()), &ctx);
+}
+
+template<typename Hash>
+void hash_named_data_to_uuid_data(const uuid& ns, std::string_view name, uuid::data& out, Hash hash_sum)
+{
+    uuid::data ns_data;
+    ns_data[0] = host_to_network(ns.raw_data()[0]);
+    ns_data[1] = host_to_network(ns.raw_data()[1]);
+
+    hash_sum(ns_data, name, out);
+
+    out[0] = network_to_host(out[0]);
+    out[1] = network_to_host(out[1]);
+}
+
 }   // namespace
 
-namespace uuidxx {
+uuid::uuid(const uuid& ns, std::string_view name, details::gen_v3_t)
+{
+    hash_named_data_to_uuid_data(ns, name, data_, md5_hash);
+
+    set_variant();
+    set_version(version::v3);
+}
 
 void uuid::set_variant() noexcept
 {

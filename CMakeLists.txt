@@ -49,6 +49,7 @@ if(NOT MSVC)
   message(STATUS "BUILD_TYPE = " ${CMAKE_BUILD_TYPE})
 endif()
 
+add_subdirectory(third_party)
 add_subdirectory(uuidxx)
 
 if(UUIDXX_NOT_SUBPROJECT)

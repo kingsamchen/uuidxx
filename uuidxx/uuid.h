@@ -37,11 +37,16 @@ struct gen_v5_t {
     explicit gen_v5_t() = default;
 };
 
-inline constexpr gen_v1_t gen_v1 {};
-inline constexpr gen_v2_t gen_v2 {};
-inline constexpr gen_v3_t gen_v3 {};
-inline constexpr gen_v4_t gen_v4 {};
-inline constexpr gen_v5_t gen_v5 {};
+struct gen_from_str_t {
+    explicit gen_from_str_t() = default;
+};
+
+inline constexpr gen_v1_t gen_v1{};
+inline constexpr gen_v2_t gen_v2{};
+inline constexpr gen_v3_t gen_v3{};
+inline constexpr gen_v4_t gen_v4{};
+inline constexpr gen_v5_t gen_v5{};
+inline constexpr gen_from_str_t gen_from_str{};
 
 }   // namespace details
 
@@ -138,6 +143,8 @@ public:
         set_variant();
         set_version(version::v4);
     }
+
+    uuid(std::string_view src, details::gen_from_str_t);
 
     uuid(const uuid&) = default;
 

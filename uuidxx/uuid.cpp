@@ -6,6 +6,7 @@
 
 #include <cinttypes>
 #include <cstdio>
+#include <vector>
 
 extern "C" {
 #include "hash/md5.h"
@@ -48,6 +49,29 @@ uuid::uuid(const uuid& ns, std::string_view name, details::gen_v3_t)
 
     set_variant();
     set_version(version::v3);
+}
+
+uuid::uuid(std::string_view src, details::gen_from_str_t)
+    : data_{}
+{
+    // TODO: validate src format
+
+    // TODO: Optimize this
+    std::vector<uint64_t> parts;
+    for (size_t start = 0; start != src.npos;) {
+        auto pos = src.find('-', start);
+        auto cnt = pos == src.npos ? src.npos : pos - start;
+        auto part = src.substr(start, cnt);
+        parts.push_back(std::stoull(std::string(part), nullptr, 16));
+        start = pos == src.npos ? src.npos : pos + 1;
+    }
+
+    data_[0] |= parts[0] << 32;
+    data_[0] |= parts[1] << 16;
+    data_[0] |= parts[2];
+
+    data_[1] |= parts[3] << 48;
+    data_[1] |= parts[4];
 }
 
 void uuid::set_variant() noexcept

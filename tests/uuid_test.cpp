@@ -146,4 +146,28 @@ TEST_CASE("V2 generation and validation", "[v2]")
     }
 }
 
+TEST_CASE("V3 Generation", "[v3]")
+{
+    auto ns = make_from("6ba7b810-9dad-11d1-80b4-00c04fd430c8");
+    auto id = make_v3(ns, "www.widgets.com");
+    REQUIRE(id.to_string() == "3d813cbb-47fb-32ba-91df-831e1593ac29");
+}
+
+TEST_CASE("Generate from string", "[from_str]")
+{
+    SECTION("from specific string")
+    {
+        std::string src_str("6ba7b810-9dad-11d1-80b4-00c04fd430c8");
+        auto uuid = make_from(src_str);
+        CHECK(uuid.to_string() == src_str);
+    }
+
+    SECTION("from and to v4")
+    {
+        auto src_str = make_v4().to_string();
+        auto uuid = make_from(src_str);
+        CHECK(uuid.to_string() == src_str);
+    }
+}
+
 }   // namespace uuidxx

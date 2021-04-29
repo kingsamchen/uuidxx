@@ -38,6 +38,11 @@ uuid make_v4(RandGen&& gen=default_rand_gen)
     return uuid(std::forward<RandGen>(gen), details::gen_v4);
 }
 
+inline uuid make_v5(const uuid& ns, std::string_view name)
+{
+    return uuid(ns, name, details::gen_v5);
+}
+
 inline uuid make_from(std::string_view src)
 {
     return uuid(src, details::gen_from_str);

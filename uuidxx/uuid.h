@@ -144,6 +144,8 @@ public:
         set_version(version::v4);
     }
 
+    uuid(const uuid& ns, std::string_view name, details::gen_v5_t);
+
     uuid(std::string_view src, details::gen_from_str_t);
 
     uuid(const uuid&) = default;

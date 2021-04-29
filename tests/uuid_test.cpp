@@ -153,6 +153,13 @@ TEST_CASE("V3 Generation", "[v3]")
     REQUIRE(id.to_string() == "3d813cbb-47fb-32ba-91df-831e1593ac29");
 }
 
+TEST_CASE("V5 Generation", "[v5]")
+{
+    auto ns = make_from("6ba7b810-9dad-11d1-80b4-00c04fd430c8");
+    auto id = make_v5(ns, "www.widgets.com");
+    REQUIRE(id.to_string() == "21f7f8de-8051-5b89-8680-0195ef798b6a");
+}
+
 TEST_CASE("Generate from string", "[from_str]")
 {
     SECTION("from specific string")

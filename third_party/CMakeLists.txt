@@ -3,8 +3,10 @@ add_library(hash)
 
 target_sources(hash
   PRIVATE
-    hash/md5.h
     hash/md5.c
+    hash/md5.h
+    hash/sha1.c
+    hash/sha1.h
 )
 
 target_include_directories(hash

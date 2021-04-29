@@ -6,10 +6,12 @@
 
 #include <cinttypes>
 #include <cstdio>
+#include <cstring>
 #include <vector>
 
 extern "C" {
 #include "hash/md5.h"
+#include "hash/sha1.h"
 }
 
 #include "uuidxx/endian_utils.h"
@@ -26,6 +28,19 @@ void md5_hash(const uuid::data& ns_data, std::string_view name, uuid::data& hash
     MD5_Update(&ctx, ns_data.data(), sizeof(ns_data));
     MD5_Update(&ctx, name.data(), static_cast<unsigned long>(name.size()));
     MD5_Final(reinterpret_cast<unsigned char*>(hashed_data.data()), &ctx);
+}
+
+void sha1_hash(const uuid::data& ns_data, std::string_view name, uuid::data& hashed_data)
+{
+    uint8_t digest[20];
+
+    SHA1_CTX ctx;
+    SHA1_Init(&ctx);
+    SHA1_Update(&ctx, reinterpret_cast<const uint8_t*>(ns_data.data()), sizeof(ns_data));
+    SHA1_Update(&ctx, reinterpret_cast<const uint8_t*>(name.data()), name.size());
+    SHA1_Final(&ctx, digest);
+
+    std::memcpy(hashed_data.data(), digest, sizeof(hashed_data));
 }
 
 template<typename Hash>
@@ -49,6 +64,14 @@ uuid::uuid(const uuid& ns, std::string_view name, details::gen_v3_t)
 
     set_variant();
     set_version(version::v3);
+}
+
+uuid::uuid(const uuid& ns, std::string_view name, details::gen_v5_t)
+{
+    hash_named_data_to_uuid_data(ns, name, data_, sha1_hash);
+
+    set_variant();
+    set_version(version::v5);
 }
 
 uuid::uuid(std::string_view src, details::gen_from_str_t)

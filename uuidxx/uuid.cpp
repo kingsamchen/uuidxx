@@ -58,6 +58,37 @@ void hash_named_data_to_uuid_data(const uuid& ns, std::string_view name, uuid::d
 
 }   // namespace
 
+uuid::uuid(host_id host, details::gen_v2_t)
+    : data_{}
+{
+    // Need high 32-bit of ts and high 8-bit of seq.
+    auto [ts, seq] = clock_sequence::instance().read();
+
+    // `local_domain` replaces low 8-bit of seq.
+    // `local_id` replaces low 32-bit of ts.
+    auto local_domain = host.domain();
+    auto local_id = host.id();
+
+    node_id node;
+    read_mac_addr_as_node_id(node);
+
+    data_[0] |= static_cast<uint64_t>(local_id) << 32;
+    data_[0] |= (ts & UINT64_C(0x0000'ffff'0000'0000)) >> 16;
+    data_[0] |= ts >> 48;
+
+    data_[1] |= static_cast<uint64_t>(seq & 0xff00) << 48;
+    data_[1] |= static_cast<uint64_t>(local_domain) << 48;
+
+    // Reversely copy into 0 ~ 47 bits of data_[1].
+    auto ptr = reinterpret_cast<uint8_t*>(&data_[1]);
+    for (auto it = node.rbegin(); it != node.rend();) {
+        *ptr++ = *it++;
+    }
+
+    set_variant();
+    set_version(version::v2);
+}
+
 uuid::uuid(const uuid& ns, std::string_view name, details::gen_v3_t)
 {
     hash_named_data_to_uuid_data(ns, name, data_, md5_hash);
@@ -95,24 +126,6 @@ uuid::uuid(std::string_view src, details::gen_from_str_t)
 
     data_[1] |= parts[3] << 48;
     data_[1] |= parts[4];
-}
-
-void uuid::set_variant() noexcept
-{
-    data_[1] &= UINT64_C(0x3fff'ffff'ffff'ffff);
-    data_[1] |= UINT64_C(0x8000'0000'0000'0000);
-}
-
-void uuid::set_version(uint8_t ver) noexcept
-{
-    auto ver_bits = static_cast<uint64_t>(ver) << 12;
-    data_[0] &= UINT64_C(0xffff'ffff'ffff'0fff);
-    data_[0] |= ver_bits;
-}
-
-uint8_t uuid::version() const noexcept
-{
-    return static_cast<uint8_t>((data_[0] >> 12) & 0x0f);
 }
 
 std::string uuid::to_string() const

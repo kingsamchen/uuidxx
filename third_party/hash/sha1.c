@@ -93,22 +93,22 @@ A million repetitions of "a"
 #pragma warning(disable : 4996)
 #pragma warning(disable : 4100)
 #else
-inline uint32_t rotl32 ( uint32_t x, int8_t r )
+static inline uint32_t rotl32 ( uint32_t x, int8_t r )
 {
     return (x << r) | (x >> (32 - r));
 }
 
-inline uint64_t rotl64 ( uint64_t x, int8_t r )
+static inline uint64_t rotl64 ( uint64_t x, int8_t r )
 {
     return (x << r) | (x >> (64 - r));
 }
 
-inline uint32_t rotr32 ( uint32_t x, int8_t r )
+static inline uint32_t rotr32 ( uint32_t x, int8_t r )
 {
     return (x >> r) | (x << (32 - r));
 }
 
-inline uint64_t rotr64 ( uint64_t x, int8_t r )
+static inline uint64_t rotr64 ( uint64_t x, int8_t r )
 {
     return (x >> r) | (x << (64 - r));
 }

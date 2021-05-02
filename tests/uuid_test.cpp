@@ -169,11 +169,45 @@ TEST_CASE("Generate from string", "[from_str]")
         CHECK(uuid.to_string() == src_str);
     }
 
+    SECTION("enclosed with braces")
+    {
+        std::string src_str("{6ba7b810-9dad-11d1-80b4-00c04fd430c8}");
+        auto uuid = make_from(src_str);
+        CHECK(uuid.to_string() == src_str.substr(1, 36));
+    }
+
     SECTION("from and to v4")
     {
         auto src_str = make_v4().to_string();
         auto uuid = make_from(src_str);
         CHECK(uuid.to_string() == src_str);
+    }
+}
+
+TEST_CASE("Invalid uuid string", "[from_str]")
+{
+    SECTION("incorrect length with 1 digit missing in the last field")
+    {
+        std::string src_str("6ba7b810-9dad-11d1-80b4-00c04fd430c");
+        CHECK_THROWS_AS(make_from(src_str), bad_uuid_string);
+    }
+
+    SECTION("not properly enclosed by braces")
+    {
+        std::string src_str("{6ba7b810-9dad-11d1-80b4-00c04fd430c8]");
+        CHECK_THROWS_AS(make_from(src_str), bad_uuid_string);
+    }
+
+    SECTION("mis-positioned dash")
+    {
+        std::string src_str("9dad-6ba7b810-11d1-80b4-00c04fd430c8");
+        CHECK_THROWS_AS(make_from(src_str), bad_uuid_string);
+    }
+
+    SECTION("one part is not valid hex string")
+    {
+        std::string src_str("6ba7b810-9dad-11d1-80b4-00c04fd430z");
+        CHECK_THROWS_AS(make_from(src_str), bad_uuid_string);
     }
 }
 

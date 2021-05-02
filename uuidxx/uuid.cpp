@@ -4,10 +4,10 @@
 
 #include "uuidxx/uuid.h"
 
+#include <charconv>
 #include <cinttypes>
 #include <cstdio>
 #include <cstring>
-#include <vector>
 
 extern "C" {
 #include "hash/md5.h"
@@ -54,6 +54,27 @@ void hash_named_data_to_uuid_data(const uuid& ns, std::string_view name, uuid::d
 
     out[0] = network_to_host(out[0]);
     out[1] = network_to_host(out[1]);
+}
+
+// Strip enclosing braces if possible and do quick format check.
+std::string_view canonicalize_uuid_str(std::string_view input)
+{
+    auto uuid_str = input;
+    if (uuid_str.size() == k_canonical_len + 2) {
+        if (!(uuid_str.front() == '{' && uuid_str.back() == '}')) {
+            throw bad_uuid_string(input);
+        }
+
+        uuid_str = uuid_str.substr(1, k_canonical_len);
+    }
+
+    if ((uuid_str.size() != k_canonical_len) ||
+        !(uuid_str[8] == '-' && uuid_str[13] == '-' &&
+          uuid_str[18] == '-' && uuid_str[23] == '-')) {
+        throw bad_uuid_string(input);
+    }
+
+    return uuid_str;
 }
 
 }   // namespace
@@ -108,17 +129,27 @@ uuid::uuid(const uuid& ns, std::string_view name, details::gen_v5_t)
 uuid::uuid(std::string_view src, details::gen_from_str_t)
     : data_{}
 {
-    // TODO: validate src format
+    auto uuid_str = canonicalize_uuid_str(src);
 
-    // TODO: Optimize this
-    std::vector<uint64_t> parts;
-    for (size_t start = 0; start != src.npos;) {
-        auto pos = src.find('-', start);
-        auto cnt = pos == src.npos ? src.npos : pos - start;
-        auto part = src.substr(start, cnt);
-        parts.push_back(std::stoull(std::string(part), nullptr, 16));
-        start = pos == src.npos ? src.npos : pos + 1;
-    }
+    auto cvt = [uuid_str](size_t first, size_t last) -> uint64_t {
+        auto begin = uuid_str.data() + first;
+        auto end = uuid_str.data() + last;
+
+        uint64_t value;
+        if (auto result = std::from_chars(begin, end, value, 16); result.ec != std::errc()) {
+            throw bad_uuid_string(uuid_str);
+        }
+
+        return value;
+    };
+
+    std::array<uint64_t, 5> parts{
+        cvt(0, 8),
+        cvt(9, 13),
+        cvt(14, 18),
+        cvt(19, 23),
+        cvt(24, 36)
+    };
 
     data_[0] |= parts[0] << 32;
     data_[0] |= parts[1] << 16;

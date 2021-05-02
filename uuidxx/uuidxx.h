@@ -43,6 +43,9 @@ inline uuid make_v5(const uuid& ns, std::string_view name)
     return uuid(ns, name, details::gen_v5);
 }
 
+// Only format like `xxxxxxxx-xxxx-Mxxx-Nxxx-xxxxxxxxxxxx` and
+// `{xxxxxxxx-xxxx-Mxxx-Nxxx-xxxxxxxxxxxx}` are supported.
+// Would throw `bad_uuid_string` if `src` is not a valid uuid string.
 inline uuid make_from(std::string_view src)
 {
     return uuid(src, details::gen_from_str);

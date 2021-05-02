@@ -7,6 +7,7 @@
 
 #include <array>
 #include <cstdint>
+#include <exception>
 #include <string>
 #include <string_view>
 
@@ -59,6 +60,20 @@ inline constexpr uint8_t v4 = 4u;
 inline constexpr uint8_t v5 = 5u;
 
 }   // namespace version
+
+class bad_uuid_string : public std::invalid_argument {
+public:
+    explicit bad_uuid_string(std::string_view uuid_str)
+        : invalid_argument(gen_err_msg(uuid_str))
+    {}
+
+    static std::string gen_err_msg(std::string_view uuid_str)
+    {
+        std::string msg("invalid uuid string: ");
+        msg.append(uuid_str);
+        return msg;
+    }
+};
 
 class uuid {
 public:

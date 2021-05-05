@@ -42,12 +42,17 @@ struct gen_from_str_t {
     explicit gen_from_str_t() = default;
 };
 
+struct gen_from_data_bytes_t {
+    explicit gen_from_data_bytes_t() = default;
+};
+
 inline constexpr gen_v1_t gen_v1{};
 inline constexpr gen_v2_t gen_v2{};
 inline constexpr gen_v3_t gen_v3{};
 inline constexpr gen_v4_t gen_v4{};
 inline constexpr gen_v5_t gen_v5{};
 inline constexpr gen_from_str_t gen_from_str{};
+inline constexpr gen_from_data_bytes_t gen_from_data_bytes{};
 
 }   // namespace details
 
@@ -73,6 +78,29 @@ public:
         msg.append(uuid_str);
         return msg;
     }
+};
+
+struct data_bytes {
+    uint32_t field1;
+    uint16_t field2;
+    uint16_t field3;
+    uint8_t  field4[8];
+
+    constexpr data_bytes()
+        : field1{},
+          field2{},
+          field3{},
+          field4{}
+    {}
+
+    constexpr data_bytes(uint32_t f1, uint16_t f2, uint16_t f3, uint8_t f41, uint8_t f42,
+                         uint8_t f43, uint8_t f44, uint8_t f45, uint8_t f46, uint8_t f47,
+                         uint8_t f48)
+        : field1(f1),
+          field2(f2),
+          field3(f3),
+          field4{f41, f42, f43, f44, f45, f46, f47, f48}
+    {}
 };
 
 class uuid {
@@ -133,6 +161,18 @@ public:
     uuid(const uuid& ns, std::string_view name, details::gen_v5_t);
 
     uuid(std::string_view src, details::gen_from_str_t);
+
+    constexpr uuid(const data_bytes& bytes, details::gen_from_data_bytes_t)
+        : data_{}
+    {
+        data_[0] |= static_cast<uint64_t>(bytes.field1) << 32;
+        data_[0] |= static_cast<uint64_t>(bytes.field2) << 16;
+        data_[0] |= static_cast<uint64_t>(bytes.field3);
+
+        for (int i = 0; i < 8; ++i) {
+            data_[1] |= static_cast<uint64_t>(bytes.field4[i]) << ((7 - i) * 8);
+        }
+    }
 
     uuid(const uuid&) = default;
 

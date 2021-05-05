@@ -51,6 +51,11 @@ inline uuid make_from(std::string_view src)
     return uuid(src, details::gen_from_str);
 }
 
+constexpr uuid make_from(const data_bytes& bytes)
+{
+    return uuid(bytes, details::gen_from_data_bytes);
+}
+
 }   // namespace uuidxx
 
 #endif  // UUIDXX_UUIDXX_H_

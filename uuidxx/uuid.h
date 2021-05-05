@@ -216,6 +216,16 @@ private:
     data data_;
 };
 
+inline bool operator==(const uuid& lhs, const uuid& rhs)
+{
+    return lhs.raw_data() == rhs.raw_data();
+}
+
+inline bool operator!=(const uuid& lhs, const uuid& rhs)
+{
+    return !(lhs == rhs);
+}
+
 }   // namespace uuidxx
 
 #endif  // UUIDXX_UUID_H_

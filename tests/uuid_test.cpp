@@ -8,10 +8,6 @@
 #include <utility>
 #include <vector>
 
-namespace {
-
-}   // namespace
-
 namespace uuidxx {
 
 TEST_CASE("V4 Format compliant", "[v4]")
@@ -233,6 +229,18 @@ TEST_CASE("Generate from data bytes", "[from_data_bytes]")
         CHECK(k_namespace_oid.to_string() == "6ba7b812-9dad-11d1-80b4-00c04fd430c8");
         CHECK(k_namespace_x500.to_string() == "6ba7b814-9dad-11d1-80b4-00c04fd430c8");
     }
+}
+
+TEST_CASE("Equality comparison", "[operatos]")
+{
+    auto nil = make_from("00000000-0000-0000-0000-000000000000");
+    CHECK(nil == k_nil);
+    CHECK_FALSE(nil != k_nil);
+
+    // We couldn't be so lucky.
+    auto u1 = make_v4();
+    auto u2 = make_v4();
+    CHECK(u1 != u2);
 }
 
 }   // namespace uuidxx

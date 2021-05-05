@@ -56,6 +56,26 @@ constexpr uuid make_from(const data_bytes& bytes)
     return uuid(bytes, details::gen_from_data_bytes);
 }
 
+const constexpr auto k_nil = make_from(data_bytes{});
+
+// Predefined constants name space ids defined in RFC 4122
+
+// 6ba7b810-9dad-11d1-80b4-00c04fd430c8
+const constexpr auto k_namespace_dns = make_from(
+    data_bytes{0x6ba7b810, 0x9dad, 0x11d1, 0x80, 0xb4, 0x00, 0xc0, 0x4f, 0xd4, 0x30, 0xc8});
+
+// 6ba7b811-9dad-11d1-80b4-00c04fd430c8
+const constexpr auto k_namespace_url = make_from(
+    data_bytes{0x6ba7b811, 0x9dad, 0x11d1, 0x80, 0xb4, 0x00, 0xc0, 0x4f, 0xd4, 0x30, 0xc8});
+
+// 6ba7b812-9dad-11d1-80b4-00c04fd430c8
+const constexpr auto k_namespace_oid = make_from(
+    data_bytes{0x6ba7b812, 0x9dad, 0x11d1, 0x80, 0xb4, 0x00, 0xc0, 0x4f, 0xd4, 0x30, 0xc8});
+
+// 6ba7b814-9dad-11d1-80b4-00c04fd430c8
+const constexpr auto k_namespace_x500 = make_from(
+    data_bytes{0x6ba7b814, 0x9dad, 0x11d1, 0x80, 0xb4, 0x00, 0xc0, 0x4f, 0xd4, 0x30, 0xc8});
+
 }   // namespace uuidxx
 
 #endif  // UUIDXX_UUIDXX_H_

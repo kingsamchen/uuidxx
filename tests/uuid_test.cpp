@@ -213,9 +213,26 @@ TEST_CASE("Invalid uuid string", "[from_str]")
 
 TEST_CASE("Generate from data bytes", "[from_data_bytes]")
 {
-    constexpr auto uuid = make_from(data_bytes{0x6ba7b810, 0x9dad, 0x11d1, 0x80, 0xb4, 0x00,
-                                               0xc0, 0x4f, 0xd4, 0x30, 0xc8});
-    REQUIRE(uuid.to_string() == "6ba7b810-9dad-11d1-80b4-00c04fd430c8");
+    SECTION("cutomized data byes")
+    {
+        constexpr auto uuid = make_from(data_bytes{0x6ba7b810, 0x9dad, 0x11d1, 0x80, 0xb4, 0x00,
+                                                   0xc0, 0x4f, 0xd4, 0x30, 0xc8});
+        REQUIRE(uuid.to_string() == "6ba7b810-9dad-11d1-80b4-00c04fd430c8");
+    }
+
+    SECTION("nil uuid")
+    {
+        CHECK(k_nil.raw_data() == std::array<uint64_t, 2>{0, 0});
+        CHECK(k_nil.to_string() == "00000000-0000-0000-0000-000000000000");
+    }
+
+    SECTION("predefined namespace ids")
+    {
+        CHECK(k_namespace_dns.to_string() == "6ba7b810-9dad-11d1-80b4-00c04fd430c8");
+        CHECK(k_namespace_url.to_string() == "6ba7b811-9dad-11d1-80b4-00c04fd430c8");
+        CHECK(k_namespace_oid.to_string() == "6ba7b812-9dad-11d1-80b4-00c04fd430c8");
+        CHECK(k_namespace_x500.to_string() == "6ba7b814-9dad-11d1-80b4-00c04fd430c8");
+    }
 }
 
 }   // namespace uuidxx

@@ -18,7 +18,7 @@ namespace details {
 
 inline uint32_t get_uid()
 {
-#if defined(_WIN32) || defined(_WIN64) 
+#if defined(_WIN32) || defined(_WIN64)
     return static_cast<uint32_t>(-1);
 #else
     static_assert(std::is_same_v<uint32_t, uid_t>);
@@ -28,7 +28,7 @@ inline uint32_t get_uid()
 
 inline uint32_t get_gid()
 {
-#if defined(_WIN32) || defined(_WIN64) 
+#if defined(_WIN32) || defined(_WIN64)
     return static_cast<uint32_t>(-1);
 #else
     static_assert(std::is_same_v<uint32_t, uid_t>);

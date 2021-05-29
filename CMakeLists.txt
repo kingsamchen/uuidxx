@@ -23,12 +23,14 @@ if(UUIDXX_NOT_SUBPROJECT)
   set_directory_properties(PROPERTIES VS_STARTUP_PROJECT "uuidxx_test")
 endif()
 
-# TODO: Add options here.
+# Add options below.
 
 set(UUIDXX_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 set(UUIDXX_CMAKE_DIR ${UUIDXX_DIR}/cmake)
 
 include(${UUIDXX_CMAKE_DIR}/CPM.cmake)
+
+message(STATUS "GENERATOR = " ${CMAKE_GENERATOR})
 
 # Compiler and output configurations.
 if(MSVC)
@@ -45,7 +47,8 @@ else()
   set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 endif()
 
-if(NOT MSVC)
+get_property(MULTICONF_GENERATOR GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
+if(NOT MULTICONF_GENERATOR)
   message(STATUS "BUILD_TYPE = " ${CMAKE_BUILD_TYPE})
 endif()
 

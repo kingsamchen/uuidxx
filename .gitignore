@@ -20,10 +20,7 @@
 bld/
 [Bb]in/
 [Oo]bj/
-
-# Keep track of pch files
-[Bb]uild/*
-![Bb]uild/pch/
+[Oo]ut/
 
 # Visual Studio 2015 cache/options directory
 .vs/

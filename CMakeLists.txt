@@ -28,6 +28,7 @@ endif()
 set(UUIDXX_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 set(UUIDXX_CMAKE_DIR ${UUIDXX_DIR}/cmake)
 
+include(CTest)
 include(${UUIDXX_CMAKE_DIR}/CPM.cmake)
 
 message(STATUS "GENERATOR = " ${CMAKE_GENERATOR})
@@ -55,6 +56,6 @@ endif()
 add_subdirectory(third_party)
 add_subdirectory(uuidxx)
 
-if(UUIDXX_NOT_SUBPROJECT)
+if(UUIDXX_NOT_SUBPROJECT AND BUILD_TESTING)
   add_subdirectory(tests)
 endif()

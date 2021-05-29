@@ -18,3 +18,5 @@ target_link_libraries(uuidxx_test
 
 get_target_property(test_FILES uuidxx_test SOURCES)
 source_group("tests" FILES ${test_FILES})
+
+add_test(NAME test_uuidxx COMMAND uuidxx_test)

@@ -80,33 +80,32 @@ Building uuidxx requires:
 
 - C++ 17 compatible compiler <sup>[1]</sup>
 - CMake 3.16 or higher
+- Python 3.5 or higher
 - Ninja build (optional) <sup>[2]</sup>
 
 1. It is possible to back port to C++ 11 & 14
 2. Ninja build is used only on *nix platforms, and Makefile would be used if ninja was not found.
 
-### Windows/MSVC
+### Using provided `anvil.py`
 
-```powershell
-$ cd uuidxx
-$ ./anvil.ps1 [-build-type <Debug|Release>] [-no-build]
-```
-
-If not specified, default build is in `Release` mode; and if `-no-build` is specified, generate Visual Studio solution project only.
-
-### Linux
+`anvil.py` wraps a few CMake commands for easy use:
 
 ```shell
 $ cd uuidxx
-$ ./anvil.sh [--build-type=<Debug|Release>] [--no-build]
+$ python(3) ./anvil.py                          # Run a release build
+$ cd path-to-build && ctest --output-on-failure # Run tests
 ```
 
-If not specified, default build is in `Release` mode; and if `--no-build` is specified, generate makefile or build.ninja files only.
+Run `python(3) ./anvil.py --help` for details.
 
-You can force generator by:
+### CMake with Fine Control
+
+If you want fine control over the configuration and building, feel free to use CMake commands directly:
 
 ```shell
-$ GENERATOR="Unix Makefiles" ./anvil.sh
+$ cd uuidxx
+$ cmake -DCPM_SOURCE_CACHE=path/to/cache/deps -DCMAKE_BUILD_TYPE=Release -B path/to/out -S .
+$ cmake --build path/to/out -- -j 8
 ```
 
 ## License

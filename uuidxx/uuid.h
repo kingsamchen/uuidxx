@@ -54,7 +54,7 @@ inline constexpr gen_v5_t gen_v5{};
 inline constexpr gen_from_str_t gen_from_str{};
 inline constexpr gen_from_data_bytes_t gen_from_data_bytes{};
 
-}   // namespace details
+} // namespace details
 
 namespace version {
 
@@ -64,16 +64,14 @@ inline constexpr uint8_t v3 = 3u;
 inline constexpr uint8_t v4 = 4u;
 inline constexpr uint8_t v5 = 5u;
 
-}   // namespace version
+} // namespace version
 
 class bad_uuid_string : public std::invalid_argument {
 public:
     explicit bad_uuid_string(std::string_view uuid_str)
-        : invalid_argument(gen_err_msg(uuid_str))
-    {}
+        : invalid_argument(gen_err_msg(uuid_str)) {}
 
-    static std::string gen_err_msg(std::string_view uuid_str)
-    {
+    static std::string gen_err_msg(std::string_view uuid_str) {
         std::string msg("invalid uuid string: ");
         msg.append(uuid_str);
         return msg;
@@ -84,14 +82,13 @@ struct data_bytes {
     uint32_t field1;
     uint16_t field2;
     uint16_t field3;
-    uint8_t  field4[8];
+    uint8_t field4[8];
 
     constexpr data_bytes()
         : field1{},
           field2{},
           field3{},
-          field4{}
-    {}
+          field4{} {}
 
     constexpr data_bytes(uint32_t f1, uint16_t f2, uint16_t f3, uint8_t f41, uint8_t f42,
                          uint8_t f43, uint8_t f44, uint8_t f45, uint8_t f46, uint8_t f47,
@@ -99,8 +96,7 @@ struct data_bytes {
         : field1(f1),
           field2(f2),
           field3(f3),
-          field4{f41, f42, f43, f44, f45, f46, f47, f48}
-    {}
+          field4{f41, f42, f43, f44, f45, f46, f47, f48} {}
 };
 
 class uuid {
@@ -116,8 +112,7 @@ public:
 public:
     template<typename NodeFetcher>
     uuid(NodeFetcher&& fetch, details::gen_v1_t)
-        : data_{}
-    {
+        : data_{} {
         static_assert(valid_fetcher_t<NodeFetcher>::value);
 
         auto [ts, seq] = clock_sequence::instance().read();
@@ -147,8 +142,7 @@ public:
     uuid(const uuid& ns, std::string_view name, details::gen_v3_t);
 
     template<typename RandGen>
-    uuid(RandGen&& gen, details::gen_v4_t)
-    {
+    uuid(RandGen&& gen, details::gen_v4_t) {
         static_assert(std::is_same_v<uint64_t, decltype(gen())>);
 
         data_[0] = gen();
@@ -163,8 +157,7 @@ public:
     uuid(std::string_view src, details::gen_from_str_t);
 
     constexpr uuid(const data_bytes& bytes, details::gen_from_data_bytes_t)
-        : data_{}
-    {
+        : data_{} {
         data_[0] |= static_cast<uint64_t>(bytes.field1) << 32;
         data_[0] |= static_cast<uint64_t>(bytes.field2) << 16;
         data_[0] |= static_cast<uint64_t>(bytes.field3);
@@ -184,29 +177,25 @@ public:
 
     ~uuid() = default;
 
-    [[nodiscard]] uint8_t version() const noexcept
-    {
+    [[nodiscard]] uint8_t version() const noexcept {
         return static_cast<uint8_t>((data_[0] >> 12) & 0x0f);
     }
 
     [[nodiscard]] std::string to_string() const;
 
     // The value is implementation defined.
-    const data& raw_data() const noexcept
-    {
+    const data& raw_data() const noexcept {
         return data_;
     }
 
 private:
     // The RFC 4122 has only one variant.
-    void set_variant() noexcept
-    {
+    void set_variant() noexcept {
         data_[1] &= UINT64_C(0x3fff'ffff'ffff'ffff);
         data_[1] |= UINT64_C(0x8000'0000'0000'0000);
     }
 
-    void set_version(uint8_t ver) noexcept
-    {
+    void set_version(uint8_t ver) noexcept {
         auto ver_bits = static_cast<uint64_t>(ver) << 12;
         data_[0] &= UINT64_C(0xffff'ffff'ffff'0fff);
         data_[0] |= ver_bits;
@@ -216,16 +205,14 @@ private:
     data data_;
 };
 
-inline bool operator==(const uuid& lhs, const uuid& rhs)
-{
+inline bool operator==(const uuid& lhs, const uuid& rhs) {
     return lhs.raw_data() == rhs.raw_data();
 }
 
-inline bool operator!=(const uuid& lhs, const uuid& rhs)
-{
+inline bool operator!=(const uuid& lhs, const uuid& rhs) {
     return !(lhs == rhs);
 }
 
-}   // namespace uuidxx
+} // namespace uuidxx
 
-#endif  // UUIDXX_UUID_H_
+#endif // UUIDXX_UUID_H_

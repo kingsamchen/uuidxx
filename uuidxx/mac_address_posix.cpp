@@ -12,8 +12,7 @@
 
 namespace uuidxx {
 
-sockaddr_ll* find_adapter(ifaddrs* start, size_t mac_addr_len)
-{
+sockaddr_ll* find_adapter(ifaddrs* start, size_t mac_addr_len) {
     for (auto addr = start; addr; addr = addr->ifa_next) {
         // Skip the loopback adapter.
         if (!addr->ifa_addr || addr->ifa_addr->sa_family != AF_PACKET ||
@@ -30,8 +29,7 @@ sockaddr_ll* find_adapter(ifaddrs* start, size_t mac_addr_len)
     return nullptr;
 }
 
-bool load_mac_addr_from_sys(node_id& mac_addr)
-{
+bool load_mac_addr_from_sys(node_id& mac_addr) {
     ifaddrs* addrs = nullptr;
     if (getifaddrs(&addrs) == -1) {
         return false;
@@ -47,4 +45,4 @@ bool load_mac_addr_from_sys(node_id& mac_addr)
     return ifad != nullptr;
 }
 
-}   // namespace uuidxx
+} // namespace uuidxx

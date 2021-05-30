@@ -16,8 +16,7 @@ namespace details {
 
 // These two functions return -1 on non-POSIX systems, like on Windows.
 
-inline uint32_t get_uid()
-{
+inline uint32_t get_uid() {
 #if defined(_WIN32) || defined(_WIN64)
     return static_cast<uint32_t>(-1);
 #else
@@ -26,8 +25,7 @@ inline uint32_t get_uid()
 #endif
 }
 
-inline uint32_t get_gid()
-{
+inline uint32_t get_gid() {
 #if defined(_WIN32) || defined(_WIN64)
     return static_cast<uint32_t>(-1);
 #else
@@ -36,7 +34,7 @@ inline uint32_t get_gid()
 #endif
 }
 
-}   // namespace details
+} // namespace details
 
 enum class local_domain {
     person,
@@ -48,16 +46,13 @@ class host_id {
 public:
     host_id(local_domain domain, uint32_t id)
         : domain_(domain),
-          id_(id)
-    {}
+          id_(id) {}
 
-    local_domain domain() const noexcept
-    {
+    local_domain domain() const noexcept {
         return domain_;
     }
 
-    uint32_t id() const noexcept
-    {
+    uint32_t id() const noexcept {
         return id_;
     }
 
@@ -66,16 +61,14 @@ private:
     uint32_t id_;
 };
 
-inline host_id make_person_host()
-{
+inline host_id make_person_host() {
     return host_id(local_domain::person, details::get_uid());
 }
 
-inline host_id make_group_host()
-{
+inline host_id make_group_host() {
     return host_id(local_domain::group, details::get_gid());
 }
 
-}   // namespace uuidxx
+} // namespace uuidxx
 
-#endif  // UUIDXX_DCE_HOST_IDENTIFIER_H_
+#endif // UUIDXX_DCE_HOST_IDENTIFIER_H_

@@ -21,8 +21,7 @@ namespace {
 
 constexpr size_t k_canonical_len = 36;
 
-void md5_hash(const uuid::data& ns_data, std::string_view name, uuid::data& hashed_data)
-{
+void md5_hash(const uuid::data& ns_data, std::string_view name, uuid::data& hashed_data) {
     MD5_CTX ctx;
     MD5_Init(&ctx);
     MD5_Update(&ctx, ns_data.data(), sizeof(ns_data));
@@ -30,8 +29,7 @@ void md5_hash(const uuid::data& ns_data, std::string_view name, uuid::data& hash
     MD5_Final(reinterpret_cast<unsigned char*>(hashed_data.data()), &ctx);
 }
 
-void sha1_hash(const uuid::data& ns_data, std::string_view name, uuid::data& hashed_data)
-{
+void sha1_hash(const uuid::data& ns_data, std::string_view name, uuid::data& hashed_data) {
     uint8_t digest[20];
 
     SHA1_CTX ctx;
@@ -44,8 +42,8 @@ void sha1_hash(const uuid::data& ns_data, std::string_view name, uuid::data& has
 }
 
 template<typename Hash>
-void hash_named_data_to_uuid_data(const uuid& ns, std::string_view name, uuid::data& out, Hash hash_sum)
-{
+void hash_named_data_to_uuid_data(const uuid& ns, std::string_view name, uuid::data& out,
+                                  Hash hash_sum) {
     uuid::data ns_data;
     ns_data[0] = host_to_network(ns.raw_data()[0]);
     ns_data[1] = host_to_network(ns.raw_data()[1]);
@@ -57,8 +55,7 @@ void hash_named_data_to_uuid_data(const uuid& ns, std::string_view name, uuid::d
 }
 
 // Strip enclosing braces if possible and do quick format check.
-std::string_view canonicalize_uuid_str(std::string_view input)
-{
+std::string_view canonicalize_uuid_str(std::string_view input) {
     auto uuid_str = input;
     if (uuid_str.size() == k_canonical_len + 2) {
         if (!(uuid_str.front() == '{' && uuid_str.back() == '}')) {
@@ -77,11 +74,10 @@ std::string_view canonicalize_uuid_str(std::string_view input)
     return uuid_str;
 }
 
-}   // namespace
+} // namespace
 
 uuid::uuid(host_id host, details::gen_v2_t)
-    : data_{}
-{
+    : data_{} {
     // Need high 32-bit of ts and high 8-bit of seq.
     auto [ts, seq] = clock_sequence::instance().read();
 
@@ -110,16 +106,14 @@ uuid::uuid(host_id host, details::gen_v2_t)
     set_version(version::v2);
 }
 
-uuid::uuid(const uuid& ns, std::string_view name, details::gen_v3_t)
-{
+uuid::uuid(const uuid& ns, std::string_view name, details::gen_v3_t) {
     hash_named_data_to_uuid_data(ns, name, data_, md5_hash);
 
     set_variant();
     set_version(version::v3);
 }
 
-uuid::uuid(const uuid& ns, std::string_view name, details::gen_v5_t)
-{
+uuid::uuid(const uuid& ns, std::string_view name, details::gen_v5_t) {
     hash_named_data_to_uuid_data(ns, name, data_, sha1_hash);
 
     set_variant();
@@ -127,8 +121,7 @@ uuid::uuid(const uuid& ns, std::string_view name, details::gen_v5_t)
 }
 
 uuid::uuid(std::string_view src, details::gen_from_str_t)
-    : data_{}
-{
+    : data_{} {
     auto uuid_str = canonicalize_uuid_str(src);
 
     auto cvt = [uuid_str](size_t first, size_t last) -> uint64_t {
@@ -143,13 +136,7 @@ uuid::uuid(std::string_view src, details::gen_from_str_t)
         return value;
     };
 
-    std::array<uint64_t, 5> parts{
-        cvt(0, 8),
-        cvt(9, 13),
-        cvt(14, 18),
-        cvt(19, 23),
-        cvt(24, 36)
-    };
+    std::array<uint64_t, 5> parts{cvt(0, 8), cvt(9, 13), cvt(14, 18), cvt(19, 23), cvt(24, 36)};
 
     data_[0] |= parts[0] << 32;
     data_[0] |= parts[1] << 16;
@@ -159,8 +146,7 @@ uuid::uuid(std::string_view src, details::gen_from_str_t)
     data_[1] |= parts[4];
 }
 
-std::string uuid::to_string() const
-{
+std::string uuid::to_string() const {
     std::string s(k_canonical_len + 1, 0);
     constexpr char fmt[] = "%08" PRIx64 "-%04" PRIx64 "-%04" PRIx64 "-%04" PRIx64 "-%012" PRIx64;
     std::snprintf(s.data(), s.size(), fmt,
@@ -170,4 +156,4 @@ std::string uuid::to_string() const
     return s;
 }
 
-}   // namespace uuidxx
+} // namespace uuidxx

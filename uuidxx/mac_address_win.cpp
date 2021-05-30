@@ -13,8 +13,7 @@
 
 namespace uuidxx {
 
-bool load_mac_addr_from_sys(node_id& mac_addr)
-{
+bool load_mac_addr_from_sys(node_id& mac_addr) {
     // Initial buffer size in 16-KB should be enough for most cases, since it's quite
     // expensive to call `GetAdaptersAddresses()`.
     // Also, we leave the `buf` uninitialized to save a few cycles.
@@ -49,4 +48,4 @@ bool load_mac_addr_from_sys(node_id& mac_addr)
     return false;
 }
 
-}   // namespace uuidxx
+} // namespace uuidxx

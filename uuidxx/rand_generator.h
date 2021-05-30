@@ -31,37 +31,33 @@ public:
 
     global_random_generator& operator=(global_random_generator&&) = delete;
 
-    static global_random_generator& instance()
-    {
+    static global_random_generator& instance() {
         static global_random_generator instance;
         return instance;
     }
 
-    uint64_t operator()()
-    {
+    uint64_t operator()() {
         std::lock_guard lock(mtx_);
         return engine_();
     }
 
 private:
     global_random_generator()
-        : engine_(std::random_device{}())
-    {}
+        : engine_(std::random_device{}()) {}
 
 private:
     std::mutex mtx_;
     std::mt19937_64 engine_;
 };
 
-}   // namespace details
+} // namespace details
 
-inline uint64_t default_rand_gen()
-{
+inline uint64_t default_rand_gen() {
     return details::global_random_generator::instance()();
 }
 
 using default_rand_gen_t = decltype(default_rand_gen);
 
-}   // namespace uuidxx
+} // namespace uuidxx
 
-#endif  // UUIDXX_RAND_GENERATOR_H_
+#endif // UUIDXX_RAND_GENERATOR_H_

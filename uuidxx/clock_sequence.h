@@ -46,6 +46,6 @@ private:
     static constexpr duration k_epoch_diff{122192928000000000};
 };
 
-}   // namespace uuidxx
+} // namespace uuidxx
 
-#endif  // UUIDXX_CLOCK_SEQUENCE_H_
+#endif // UUIDXX_CLOCK_SEQUENCE_H_

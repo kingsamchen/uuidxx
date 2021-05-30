@@ -249,3 +249,6 @@ ModelManifest.xml
 
 # CLion
 *.idea/
+
+# Visual Studio built-in CMake support
+CMakeSettings.json

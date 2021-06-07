@@ -76,6 +76,7 @@ class uniconf_subsystem():
         thread_num = os.cpu_count() + 2
         cmd = ['cmake',
                f'--build "{self._out}"',
+               f'--verbose',
                f'-- -j {thread_num}']
 
         run_as_shell(cmd)
@@ -120,6 +121,7 @@ class multiconf_subsystem():
     def build(self):
         cmd = ['cmake',
                f'--build "{self._out}"',
+               f'--verbose',
                f'--config {self._build_type}']
 
         run_as_shell(cmd)

@@ -67,7 +67,7 @@ project(my_project)
 set(CMAKE_CXX_STANDARD 17)
 
 include(cmake/CPM.cmake)
-CPMAddPackage("gh:kingsamchen/uuidxx")
+CPMAddPackage("gh:kingsamchen/uuidxx#tag")
 
 add_executable(my_exe source.cpp)
 
@@ -86,17 +86,17 @@ Building uuidxx requires:
 1. It is possible to back port to C++ 11 & 14
 2. Ninja build is used only on *nix platforms, and Makefile would be used if ninja was not found.
 
-### Using provided `anvil.py`
+### Using provided `build.py`
 
-`anvil.py` wraps a few CMake commands for easy use:
+`build.py` wraps a few CMake commands for easy use:
 
 ```shell
 $ cd uuidxx
-$ python(3) ./anvil.py                          # Run a release build
+$ python(3) ./build.py                          # Run a release build
 $ cd path-to-build && ctest --output-on-failure # Run tests
 ```
 
-Run `python(3) ./anvil.py --help` for details.
+Run `python(3) ./build.py --help` for details.
 
 ### CMake with Fine Control
 

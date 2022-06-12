@@ -1,4 +1,4 @@
-CPMAddPackage("gh:catchorg/Catch2@2.13.4")
+CPMAddPackage("gh:catchorg/Catch2@2.13.9")
 
 add_executable(uuidxx_test)
 

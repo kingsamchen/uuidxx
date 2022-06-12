@@ -37,29 +37,22 @@ target_link_libraries(uuidxx
     hash
 )
 
-apply_uuidxx_compile_conf(uuidxx)
+uuidxx_apply_common_compile_options(uuidxx)
 
-get_target_property(uuidxx_FILES uuidxx SOURCES)
-source_group("uuidxx" FILES ${uuidxx_FILES})
-
-if(MSVC AND UUIDXX_ENABLE_CODE_ANALYSIS)
-  enable_uuidxx_msvc_static_analysis_conf(uuidxx
-    WDL
-      /wd6011 # Dereferencing potentially NULL pointer.
-  )
+if(MSVC)
+  if(UUIDXX_USE_MSVC_PARALLEL_BUILD)
+    uuidxx_apply_msvc_parallel_build(uuidxx)
+  endif()
+  if(UUIDXX_USE_MSVC_STATIC_ANALYSIS)
+    uuidxx_apply_msvc_static_analysis(uuidxx
+      WDL
+        /wd6011 # Dereferencing potentially NULL pointer.
+    )
+  endif()
+  get_target_property(uuidxx_FILES uuidxx SOURCES)
+  source_group("uuidxx" FILES ${uuidxx_FILES})
+else()
+  if(UUIDXX_USE_SANITIZER)
+    uuidxx_apply_sanitizer(uuidxx)
+  endif()
 endif()
-
-set_target_properties(uuidxx PROPERTIES
-    VS_GLOBAL_RunCodeAnalysis true
-
-    # Use visual studio core guidelines
-    # Tweak as your wish.
-    VS_GLOBAL_EnableMicrosoftCodeAnalysis true
-    # VS_GLOBAL_CodeAnalysisRuleSet ${CMAKE_CURRENT_SOURCE_DIR}/foo.ruleset
-    # VS_GLOBAL_CodeAnalysisRuleSet ${CMAKE_CURRENT_SOURCE_DIR}/foo.ruleset
-
-    # Use clangtidy
-    # Tweak as your wish.
-    VS_GLOBAL_EnableClangTidyCodeAnalysis true
-    # VS_GLOBAL_ClangTidyChecks -checks=-*,modernize-*,-modernize-use-trailing-return-type
-)

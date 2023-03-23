@@ -12,7 +12,7 @@ if(UUIDXX_NOT_SUBPROJECT)
 endif()
 
 message(STATUS "UUIDXX_USE_MSVC_PARALLEL_BUILD = ${UUIDXX_USE_MSVC_PARALLEL_BUILD}")
-message(STATUS "UUIDXX_USE_MSVC_STATIC_ANALYSIS = $UUIDXX_USE_MSVC_STATIC_ANALYSIS}")
+message(STATUS "UUIDXX_USE_MSVC_STATIC_ANALYSIS = ${UUIDXX_USE_MSVC_STATIC_ANALYSIS}")
 message(STATUS "UUIDXX_USE_WIN32_LEAN_AND_MEAN = ${UUIDXX_USE_WIN32_LEAN_AND_MEAN}")
 
 function(uuidxx_apply_common_compile_options TARGET)
@@ -35,12 +35,9 @@ function(uuidxx_apply_common_compile_options TARGET)
       /wd4819 # source characters not in current code page.
 
       /Zc:inline            # Have the compiler eliminate unreferenced COMDAT functions and data before emitting the object file.
-      /Zc:referenceBinding  # Disallow temporaries from binding to non-const lvalue references.
       /Zc:rvalueCast        # Enforce the standard rules for explicit type conversion.
-      /Zc:implicitNoexcept  # Enable implicit noexcept specifications where required, such as destructors.
       /Zc:strictStrings     # Don't allow conversion from a string literal to mutable characters.
       /Zc:threadSafeInit    # Enable thread-safe function-local statics initialization.
-      /Zc:throwingNew       # Assume operator new throws on failure.
 
       /permissive-  # Be mean, don't allow bad non-standard stuff (C++/CLI, __declspec, etc. are all left intact).
   )
@@ -69,11 +66,17 @@ function(uuidxx_apply_msvc_static_analysis TARGET)
   target_compile_options(${TARGET}
     PRIVATE
       /analyze
-      /analyze:WX-
 
       /wd6001 # Using uninitialized memory.
       /wd6011 # Dereferencing potentially NULL pointer.
 
       ${ARG_WDL}
   )
+
+  if (CMAKE_GENERATOR MATCHES "Visual Studio")
+    set_target_properties(${TARGET} PROPERTIES
+      VS_GLOBAL_EnableMicrosoftCodeAnalysis true
+      VS_GLOBAL_RunCodeAnalysis true
+    )
+  endif()
 endfunction()

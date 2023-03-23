@@ -37,7 +37,7 @@ public:
     }
 
     uint64_t operator()() {
-        std::lock_guard lock(mtx_);
+        const std::lock_guard lock(mtx_);
         return engine_();
     }
 

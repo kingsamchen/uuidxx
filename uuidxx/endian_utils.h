@@ -6,120 +6,67 @@
 #define UUIDXX_ENDIAN_UTILS_H_
 
 #include <cstdint>
-#include <cstdlib>
 
-#if defined(__linux__)
-#include <endian.h>
+#if defined(_WIN32)
+#include <cstdlib>
+#else
+#include <byteswap.h>
 #endif
 
 namespace uuidxx {
 
-#if defined(__linux__)
+#if defined(_WIN32)
 
-// little-endian to big-endian
-
-inline int16_t host_to_network(int16_t n) noexcept {
-    return htobe16(n);
+inline std::int16_t byteswap(std::int16_t n) noexcept {
+    return static_cast<std::int16_t>(_byteswap_ushort(static_cast<std::uint16_t>(n)));
 }
 
-inline uint16_t host_to_network(uint16_t n) noexcept {
-    return htobe16(n);
-}
-
-inline int32_t host_to_network(int32_t n) noexcept {
-    return htobe32(n);
-}
-
-inline uint32_t host_to_network(uint32_t n) noexcept {
-    return htobe32(n);
-}
-
-inline int64_t host_to_network(int64_t n) noexcept {
-    return htobe64(n);
-}
-
-inline uint64_t host_to_network(uint64_t n) noexcept {
-    return htobe64(n);
-}
-
-// big-endian to little-endian
-
-inline int16_t network_to_host(int16_t n) noexcept {
-    return be16toh(n);
-}
-
-inline uint16_t network_to_host(uint16_t n) noexcept {
-    return be16toh(n);
-}
-
-inline int32_t network_to_host(int32_t n) noexcept {
-    return be32toh(n);
-}
-
-inline uint32_t network_to_host(uint32_t n) noexcept {
-    return be32toh(n);
-}
-
-inline int64_t network_to_host(int64_t n) noexcept {
-    return be64toh(n);
-}
-
-inline uint64_t network_to_host(uint64_t n) noexcept {
-    return be64toh(n);
-}
-
-#elif defined(_WIN32) || defined(_WIN64)
-
-// little-endian to big-endian
-
-inline int16_t host_to_network(int16_t n) noexcept {
+inline std::uint16_t byteswap(std::uint16_t n) noexcept {
     return _byteswap_ushort(n);
 }
 
-inline uint16_t host_to_network(uint16_t n) noexcept {
-    return _byteswap_ushort(n);
+inline std::int32_t byteswap(std::int32_t n) noexcept {
+    static_assert(sizeof(std::uint32_t) == sizeof(unsigned long)); // NOLINT(google-runtime-int)
+    return static_cast<std::int32_t>(_byteswap_ulong(static_cast<std::uint32_t>(n)));
 }
 
-inline int32_t host_to_network(int32_t n) noexcept {
+inline std::uint32_t byteswap(std::uint32_t n) noexcept {
+    static_assert(sizeof(std::uint32_t) == sizeof(unsigned long)); // NOLINT(google-runtime-int)
     return _byteswap_ulong(n);
 }
 
-inline uint32_t host_to_network(uint32_t n) noexcept {
-    return _byteswap_ulong(n);
+inline std::int64_t byteswap(std::int64_t n) noexcept {
+    return static_cast<std::int64_t>(_byteswap_uint64(static_cast<std::uint64_t>(n)));
 }
 
-inline int64_t host_to_network(int64_t n) noexcept {
+inline std::uint64_t byteswap(std::uint64_t n) noexcept {
     return _byteswap_uint64(n);
 }
 
-inline uint64_t host_to_network(uint64_t n) noexcept {
-    return _byteswap_uint64(n);
+#else
+
+inline std::int16_t byteswap(std::int16_t n) noexcept {
+    return static_cast<std::int16_t>(bswap_16(static_cast<std::uint16_t>(n)));
 }
 
-// big-endian to little-endian
-
-inline int16_t network_to_host(int16_t n) noexcept {
-    return _byteswap_ushort(n);
+inline std::uint16_t byteswap(std::uint16_t n) noexcept {
+    return bswap_16(n);
 }
 
-inline uint16_t network_to_host(uint16_t n) noexcept {
-    return _byteswap_ushort(n);
+inline std::int32_t byteswap(std::int32_t n) noexcept {
+    return static_cast<std::int32_t>(bswap_32(static_cast<std::uint32_t>(n)));
 }
 
-inline int32_t network_to_host(int32_t n) noexcept {
-    return _byteswap_ulong(n);
+inline std::uint32_t byteswap(std::uint32_t n) noexcept {
+    return bswap_32(n);
 }
 
-inline uint32_t network_to_host(uint32_t n) noexcept {
-    return _byteswap_ulong(n);
+inline std::int64_t byteswap(std::int64_t n) noexcept {
+    return static_cast<std::int64_t>(bswap_64(static_cast<std::uint64_t>(n)));
 }
 
-inline int64_t network_to_host(int64_t n) noexcept {
-    return _byteswap_uint64(n);
-}
-
-inline uint64_t network_to_host(uint64_t n) noexcept {
-    return _byteswap_uint64(n);
+inline std::uint64_t byteswap(std::uint64_t n) noexcept {
+    return bswap_64(n);
 }
 
 #endif

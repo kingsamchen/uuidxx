@@ -6,13 +6,13 @@
 #define UUIDXX_NODE_FETCHER_H_
 
 #include <array>
-#include <cstdint>
+#include <cstddef>
 #include <type_traits>
 
 namespace uuidxx {
 
 // A 48-bit device-related identifier.
-using node_id = std::array<uint8_t, 6>;
+using node_id = std::array<std::byte, 6>;
 
 template<typename Fetcher, typename = void>
 struct valid_fetcher_t : std::false_type {};

@@ -24,7 +24,7 @@ void load_mac_address(node_id& addr) {
     std::memcpy(addr.data(), &rand, addr.size());
 
     // Recommended by RFC.
-    addr[0] |= 0x01;
+    addr[0] |= std::byte{0x01};
 }
 
 void read_mac_addr_as_node_id(node_id& id) {

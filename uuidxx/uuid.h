@@ -6,6 +6,7 @@
 #define UUIDXX_UUID_H_
 
 #include <array>
+#include <cstddef>
 #include <cstdint>
 #include <exception>
 #include <string>
@@ -58,11 +59,11 @@ inline constexpr gen_from_data_bytes_t gen_from_data_bytes{};
 
 namespace version {
 
-inline constexpr uint8_t v1 = 1u;
-inline constexpr uint8_t v2 = 2u;
-inline constexpr uint8_t v3 = 3u;
-inline constexpr uint8_t v4 = 4u;
-inline constexpr uint8_t v5 = 5u;
+inline constexpr uint8_t v1 = 1U;
+inline constexpr uint8_t v2 = 2U;
+inline constexpr uint8_t v3 = 3U;
+inline constexpr uint8_t v4 = 4U;
+inline constexpr uint8_t v5 = 5U;
 
 } // namespace version
 
@@ -111,8 +112,7 @@ public:
 
 public:
     template<typename NodeFetcher>
-    uuid(NodeFetcher&& fetch, details::gen_v1_t)
-        : data_{} {
+    uuid(NodeFetcher&& fetch, details::gen_v1_t) {
         static_assert(valid_fetcher_t<NodeFetcher>::value);
 
         auto [ts, seq] = clock_sequence::instance().read();
@@ -128,7 +128,7 @@ public:
         data_[1] |= static_cast<uint64_t>(seq & 0xff) << 48;
 
         // Reversely copy into 0 ~ 47 bits of data_[1].
-        auto ptr = reinterpret_cast<uint8_t*>(&data_[1]);
+        auto ptr = reinterpret_cast<std::byte*>(&data_[1]);
         for (auto it = id.rbegin(); it != id.rend();) {
             *ptr++ = *it++;
         }
@@ -156,8 +156,7 @@ public:
 
     uuid(std::string_view src, details::gen_from_str_t);
 
-    constexpr uuid(const data_bytes& bytes, details::gen_from_data_bytes_t)
-        : data_{} {
+    constexpr uuid(const data_bytes& bytes, details::gen_from_data_bytes_t) {
         data_[0] |= static_cast<uint64_t>(bytes.field1) << 32;
         data_[0] |= static_cast<uint64_t>(bytes.field2) << 16;
         data_[0] |= static_cast<uint64_t>(bytes.field3);
@@ -202,7 +201,7 @@ private:
     }
 
 private:
-    data data_;
+    data data_{0};
 };
 
 inline bool operator==(const uuid& lhs, const uuid& rhs) {

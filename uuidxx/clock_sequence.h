@@ -38,7 +38,7 @@ private:
 
 private:
     std::mutex mtx_;
-    uint64_t last_time_;
+    uint64_t last_time_{0};
     uint16_t seq_;
 
     // Difference in 100ns intervals between UUID epoch (1582/10/15 00:00:00) and Unix

@@ -25,6 +25,7 @@ void md5_hash(const uuid::data& ns_data, std::string_view name, uuid::data& hash
     MD5_CTX ctx;
     MD5_Init(&ctx);
     MD5_Update(&ctx, ns_data.data(), sizeof(ns_data));
+    // NOLINTNEXTLINE(google-runtime-int)
     MD5_Update(&ctx, name.data(), static_cast<unsigned long>(name.size()));
     MD5_Final(reinterpret_cast<unsigned char*>(hashed_data.data()), &ctx);
 }
@@ -45,20 +46,20 @@ template<typename Hash>
 void hash_named_data_to_uuid_data(const uuid& ns, std::string_view name, uuid::data& out,
                                   Hash hash_sum) {
     uuid::data ns_data;
-    ns_data[0] = host_to_network(ns.raw_data()[0]);
-    ns_data[1] = host_to_network(ns.raw_data()[1]);
+    ns_data[0] = byteswap(ns.raw_data()[0]);
+    ns_data[1] = byteswap(ns.raw_data()[1]);
 
     hash_sum(ns_data, name, out);
 
-    out[0] = network_to_host(out[0]);
-    out[1] = network_to_host(out[1]);
+    out[0] = byteswap(out[0]);
+    out[1] = byteswap(out[1]);
 }
 
 // Strip enclosing braces if possible and do quick format check.
 std::string_view canonicalize_uuid_str(std::string_view input) {
     auto uuid_str = input;
     if (uuid_str.size() == k_canonical_len + 2) {
-        if (!(uuid_str.front() == '{' && uuid_str.back() == '}')) {
+        if (uuid_str.front() != '{' || uuid_str.back() != '}') {
             throw bad_uuid_string(input);
         }
 
@@ -66,8 +67,8 @@ std::string_view canonicalize_uuid_str(std::string_view input) {
     }
 
     if ((uuid_str.size() != k_canonical_len) ||
-        !(uuid_str[8] == '-' && uuid_str[13] == '-' &&
-          uuid_str[18] == '-' && uuid_str[23] == '-')) {
+        (uuid_str[8] != '-' || uuid_str[13] != '-' ||
+         uuid_str[18] != '-' || uuid_str[23] != '-')) {
         throw bad_uuid_string(input);
     }
 
@@ -76,8 +77,7 @@ std::string_view canonicalize_uuid_str(std::string_view input) {
 
 } // namespace
 
-uuid::uuid(host_id host, details::gen_v2_t)
-    : data_{} {
+uuid::uuid(host_id host, details::gen_v2_t) {
     // Need high 32-bit of ts and high 8-bit of seq.
     auto [ts, seq] = clock_sequence::instance().read();
 
@@ -97,7 +97,7 @@ uuid::uuid(host_id host, details::gen_v2_t)
     data_[1] |= static_cast<uint64_t>(local_domain) << 48;
 
     // Reversely copy into 0 ~ 47 bits of data_[1].
-    auto ptr = reinterpret_cast<uint8_t*>(&data_[1]);
+    auto ptr = reinterpret_cast<std::byte*>(&data_[1]);
     for (auto it = node.rbegin(); it != node.rend();) {
         *ptr++ = *it++;
     }
@@ -120,15 +120,14 @@ uuid::uuid(const uuid& ns, std::string_view name, details::gen_v5_t) {
     set_version(version::v5);
 }
 
-uuid::uuid(std::string_view src, details::gen_from_str_t)
-    : data_{} {
+uuid::uuid(std::string_view src, details::gen_from_str_t) {
     auto uuid_str = canonicalize_uuid_str(src);
 
     auto cvt = [uuid_str](size_t first, size_t last) -> uint64_t {
         auto begin = uuid_str.data() + first;
         auto end = uuid_str.data() + last;
 
-        uint64_t value;
+        uint64_t value{0};
         if (auto result = std::from_chars(begin, end, value, 16); result.ec != std::errc()) {
             throw bad_uuid_string(uuid_str);
         }

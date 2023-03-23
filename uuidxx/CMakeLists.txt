@@ -31,13 +31,18 @@ target_include_directories(uuidxx
 )
 
 target_link_libraries(uuidxx
-  INTERFACE
+  PUBLIC
     Threads::Threads
+
   PRIVATE
     hash
 )
 
 uuidxx_apply_common_compile_options(uuidxx)
+
+if(UUIDXX_ENABLE_CLANG_TIDY)
+  uuidxx_apply_clang_tidy(uuidxx)
+endif()
 
 if(MSVC)
   if(UUIDXX_USE_MSVC_PARALLEL_BUILD)
@@ -49,10 +54,11 @@ if(MSVC)
         /wd6011 # Dereferencing potentially NULL pointer.
     )
   endif()
-  get_target_property(uuidxx_FILES uuidxx SOURCES)
-  source_group("uuidxx" FILES ${uuidxx_FILES})
 else()
   if(UUIDXX_USE_SANITIZER)
     uuidxx_apply_sanitizer(uuidxx)
   endif()
 endif()
+
+get_target_property(uuidxx_FILES uuidxx SOURCES)
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${uuidxx_FILES})

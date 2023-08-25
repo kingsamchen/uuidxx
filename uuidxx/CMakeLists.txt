@@ -1,7 +1,7 @@
 
 find_package(Threads REQUIRED)
 
-add_library(uuidxx)
+add_library(uuidxx STATIC)
 
 target_sources(uuidxx
   PRIVATE
@@ -27,15 +27,16 @@ target_sources(uuidxx
 )
 
 target_include_directories(uuidxx
-  PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../
+  PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
-target_link_libraries(uuidxx
-  PUBLIC
-    Threads::Threads
 
+target_link_libraries(uuidxx
   PRIVATE
     hash
+    Threads::Threads
 )
 
 uuidxx_apply_common_compile_options(uuidxx)

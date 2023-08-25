@@ -1,5 +1,5 @@
 
-add_library(hash)
+add_library(hash OBJECT)
 
 target_sources(hash
   PRIVATE
@@ -10,7 +10,9 @@ target_sources(hash
 )
 
 target_include_directories(hash
-  PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
+  PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
 uuidxx_apply_common_compile_options(hash)

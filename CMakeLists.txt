@@ -26,6 +26,7 @@ set(UUIDXX_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 set(UUIDXX_CMAKE_DIR ${UUIDXX_DIR}/cmake)
 
 include(CTest)
+include(GNUInstallDirs)
 include(${UUIDXX_CMAKE_DIR}/CPM.cmake)
 
 message(STATUS "uuidxx GENERATOR = " ${CMAKE_GENERATOR})
@@ -68,3 +69,5 @@ add_subdirectory(uuidxx)
 if(UUIDXX_NOT_SUBPROJECT AND BUILD_TESTING)
   add_subdirectory(tests)
 endif()
+
+include(${UUIDXX_CMAKE_DIR}/install.cmake)
